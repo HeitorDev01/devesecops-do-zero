@@ -1,27 +1,49 @@
 """
-Scanner de segredos — etapa 3.
+Scanner de segredos — etapa 4.
 
-Varre uma pasta inteira, entrando nas subpastas, e aponta cada
-chave de acesso da AWS que encontrar: arquivo, linha e valor.
+Agora o scanner tem um catalago de padroes, cada um com sua gravidade, em vez de conhecer um unico tipo de segredo
 """
 
 import os
 import re
 
-PADRAO_AWS = r"AKIA[A-Z0-9]{16}"
+PADROES = [
+    {
+        "nome": "Chave de acesso da AWS",
+        "regex": r"AKIA[A-Z0-9]{16}",
+        "gravidade": "ALTA",
+    },
+    {
+        "nome": "Chave privada (RSA/SSH/EC)",
+        "regex": r"-----BEGIN (?:RSA |DSA |EC |OPENSSH )?PRIVATE KEY-----",
+        "gravidade": "ALTA",
+    },
+    {
+        "nome": "Token de bot do Slack",
+        "regex": r"xox[baprs]-[0-9A-Za-z-]{10,}",
+        "gravidade": "ALTA",
+    },
+    {
+        "nome": "Senha ou token escrito no código",
+        "regex": r"(?i)[a-z0-9_.-]*(?:senha|password|token|secret|api[_-]?key)[a-z0-9_.-]*\s*=\s*[\"'][^\"'\s]{6,}[\"']",
+        "gravidade": "MEDIA",
+    },
+]
+
+for _padrao in PADROES:
+    _padrao["compilado"] = re.compile(_padrao["regex"])
 
 PASTAS_IGNORADAS = [".git", ".venv", "__pycache__"]
 
 
-def procurar_chave(linha):
-    """Devolve o trecho encontrado nesta linha, ou None se não achar nada."""
-    resultado = re.search(PADRAO_AWS, linha)
+def verificar_linha(linha):
+    """ Devolve uma lista de (gravidade, nome_do_padrao, trecho)."""
+    achados = []
 
-    if resultado is None:
-        return None
-
-    return resultado.group(0)
-
+    for padrao in PADROES:
+        for encontrado in padrao["compilado"].finditer(linha):
+            achados.append((padrao["gravidade"], padrao["nome"], encontrado.group(0)))
+    return achados 
 
 def verificar_arquivo(caminho):
     """Devolve uma lista de pares (numero_da_linha, trecho_encontrado)."""
@@ -29,11 +51,8 @@ def verificar_arquivo(caminho):
 
     with open(caminho, "r", encoding="utf-8", errors="ignore") as arquivo:
         for numero, linha in enumerate(arquivo, start=1):
-            trecho = procurar_chave(linha)
-
-            if trecho is not None:
-                achados.append((numero, trecho))
-
+           for gravidade, nome, trecho in verificar_linha(linha):
+               achados.append((numero, gravidade, nome, trecho))
     return achados
 
 
@@ -47,8 +66,8 @@ def escanear(raiz):
         for nome_do_arquivo in arquivos:
             caminho = os.path.join(pasta_atual, nome_do_arquivo)
 
-            for numero, trecho in verificar_arquivo(caminho):
-                achados.append((caminho, numero, trecho))
+            for numero, gravidade, nome, trecho in verificar_arquivo(caminho):
+                achados.append((caminho, numero, gravidade, nome, trecho))
 
     return achados
 
@@ -57,5 +76,5 @@ if __name__ == "__main__":
     resultados = escanear(".")
 
     print("Segredos encontrados:", len(resultados))
-    for caminho, numero, trecho in resultados:
-        print(" - {}:{} -> {}".format(caminho, numero, trecho))
+    for caminho, numero, gravidade, nome, trecho in resultados:
+        print(" [{}] {}:{}  {}".format(gravidade, caminho, numero, nome))
