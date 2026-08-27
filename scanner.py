@@ -43,7 +43,7 @@ for _padrao in PADROES:
 
 PASTAS_IGNORADAS = [".git", ".venv", "__pycache__"]
 
-def marcar(texto):
+def mascarar(texto):
     """Mantem ops quatro primeiros caracteres e esconde o resto. """
     if len(texto) <= 4:
         return "*" * len(texto)
@@ -75,11 +75,11 @@ def verificar_linha(linha):
             if parece_exemplo(trecho):
                 continue
 
-            achados.append((padrao["gravidade"], padrao[nome], mascarar(trecho)))
+            achados.append((padrao["gravidade"], padrao["nome"], mascarar(trecho)))
     return achados
 
 def verificar_arquivo(caminho):
-    """Devolve uma lista de pares (numero_da_linha, trecho_encontrado)."""
+    """Devolve uma lista de (numeros, gravidade, nome, trecho)."""
     achados = []
 
     with open(caminho, "r", encoding="utf-8", errors="ignore") as arquivo:
@@ -90,7 +90,7 @@ def verificar_arquivo(caminho):
 
 
 def escanear(raiz):
-    """Percorre a árvore de pastas e devolve (caminho, numero, trecho)."""
+    """Percorre a árvore e devolve (caminho, numero, gravidade, nome, trecho)."""
     achados = []
 
     for pasta_atual, subpastas, arquivos in os.walk(raiz):
@@ -107,7 +107,6 @@ def escanear(raiz):
 
 if __name__ == "__main__":
     resultados = escanear(".")
-
     print("Segredos encontrados:", len(resultados))
     for caminho, numero, gravidade, nome, trecho in resultados:
         print(" [{}] {}:{}  {}  ->  {}".format(gravidade, caminho, numero, nome, trecho))
