@@ -1,11 +1,44 @@
 """
-Scanner de segredos — etapa 4.
+Scanner de segredos — etapa 6.
 
-Agora o scanner tem um catalago de padroes, cada um com sua gravidade, em vez de conhecer um unico tipo de segredo
+Cada achado agora é um dicionario com compos nomeados, sempre os mesmos. É esse formato que vai permitir, mais adiante,
+que o Bandit e o pip-audit conversem com o mesmo motor de politica
 """
 
 import os
 import re
+
+PADROES = [
+    {
+        "nome": "Chave de acesso da AWS",
+        "regex": r"AKIA[A-Z0-9]{16}",
+        "gravidade": "ALTA",
+        "correcao": "Revogue a chave no console da AWS e use IAM Roles ou variáveis de ambiente.",
+    },
+    {
+        "nome": "Chave privada (RSA/SSH/EC)",
+        "regex": r"-----BEGIN (?:RSA |DSA |EC |OPENSSH )?PRIVATE KEY-----",
+        "gravidade": "ALTA",
+        "correcao": "Gere um novo par de chaves e guarde a privada em um cofre de segredos.",
+    },
+    {
+        "nome": "Token de bot do Slack",
+        "regex": r"xox[baprs]-[0-9A-Za-z-]{10,}",
+        "gravidade": "ALTA",
+        "correcao": "Revogue o token no painel do Slack e recrie-o como variável de ambiente.",
+    },
+    {
+        "nome": "Senha ou token escrito no código",
+        "regex": r"(?i)[a-z0-9_.-]*(?:senha|password|token|secret|api[_-]?key)[a-z0-9_.-]*\s*=\s*[\"'][^\"'\s]{6,}[\"']",
+        "gravidade": "MEDIA",
+        "correcao": "Troque o valor por os.environ['NOME_DA_VARIAVEL'] e cadastre o segredo no CI.",
+    },
+]
+
+for _padrao in PADROES:
+    _padrao["compilado"] = re.compile(_padrao["regex"])
+
+PASTAS_IGNORADAS = [".git", ".venv", "__pycache__"]
 
 PALAVRAS_DE_EXEMPLO = [
     "exemplo", "example", "sua_", "seu_", "your_",
@@ -14,34 +47,6 @@ PALAVRAS_DE_EXEMPLO = [
 ]
 
 MARCADOR_DE_EXCECAO = "# segredo-ok"
-
-PADROES = [
-    {
-        "nome": "Chave de acesso da AWS",
-        "regex": r"AKIA[A-Z0-9]{16}",
-        "gravidade": "ALTA",
-    },
-    {
-        "nome": "Chave privada (RSA/SSH/EC)",
-        "regex": r"-----BEGIN (?:RSA |DSA |EC |OPENSSH )?PRIVATE KEY-----",
-        "gravidade": "ALTA",
-    },
-    {
-        "nome": "Token de bot do Slack",
-        "regex": r"xox[baprs]-[0-9A-Za-z-]{10,}",
-        "gravidade": "ALTA",
-    },
-    {
-        "nome": "Senha ou token escrito no código",
-        "regex": r"(?i)[a-z0-9_.-]*(?:senha|password|token|secret|api[_-]?key)[a-z0-9_.-]*\s*=\s*[\"'][^\"'\s]{6,}[\"']",
-        "gravidade": "MEDIA",
-    },
-]
-
-for _padrao in PADROES:
-    _padrao["compilado"] = re.compile(_padrao["regex"])
-
-PASTAS_IGNORADAS = [".git", ".venv", "__pycache__"]
 
 def mascarar(texto):
     """Mantem ops quatro primeiros caracteres e esconde o resto. """
@@ -61,7 +66,7 @@ def parece_exemplo(trecho):
     return False
 
 
-def verificar_linha(linha):
+def verificar_linha(linha, numero_da_linha, caminho):
     """ Devolve uma lista de (gravidade, nome_do_padrao, trecho)."""
     achados = []
 
@@ -75,22 +80,31 @@ def verificar_linha(linha):
             if parece_exemplo(trecho):
                 continue
 
-            achados.append((padrao["gravidade"], padrao["nome"], mascarar(trecho)))
-    return achados
+            achados.append({
+                "ferramenta": "scanner-de-segredos",
+                "tipo": "segredo",
+                "gravidade": padrao["gravidade"],
+                "titulo": padrao["nome"],
+                "arquivo": caminho,
+                "linha": numero_da_linha,
+                "detalhe": "Valor encontrado: " + mascarar(trecho),
+                "correcao": padrao["correcao"],
+            })
+
+    return achados 
 
 def verificar_arquivo(caminho):
-    """Devolve uma lista de (numeros, gravidade, nome, trecho)."""
+    """Devolve todos os achados deste arquivo."""
     achados = []
 
     with open(caminho, "r", encoding="utf-8", errors="ignore") as arquivo:
         for numero, linha in enumerate(arquivo, start=1):
-           for gravidade, nome, trecho in verificar_linha(linha):
-               achados.append((numero, gravidade, nome, trecho))
+               achados.append(verificar_linha(linha, numero, caminho))
     return achados
 
 
 def escanear(raiz):
-    """Percorre a árvore e devolve (caminho, numero, gravidade, nome, trecho)."""
+    """Percorre a árvore e devolve todos os achados."""
     achados = []
 
     for pasta_atual, subpastas, arquivos in os.walk(raiz):
@@ -98,15 +112,21 @@ def escanear(raiz):
 
         for nome_do_arquivo in arquivos:
             caminho = os.path.join(pasta_atual, nome_do_arquivo)
-
-            for numero, gravidade, nome, trecho in verificar_arquivo(caminho):
-                achados.append((caminho, numero, gravidade, nome, trecho))
+            achados.extend(verificar_arquivo(caminho))
 
     return achados
 
 
 if __name__ == "__main__":
     resultados = escanear(".")
+
     print("Segredos encontrados:", len(resultados))
-    for caminho, numero, gravidade, nome, trecho in resultados:
-        print(" [{}] {}:{}  {}  ->  {}".format(gravidade, caminho, numero, nome, trecho))
+    print("")
+
+    for achado in resultados:
+        print("[{}] {}:{}".format(
+            achado["gravidade"], achado["arquivo"], achado["linha"]))
+    print("    {}".format(achado["titulo"]))
+    print("    {}".format(achado["detalhe"]))
+    print("    Como corrigir: {}".format(achado["correcao"]))
+    print("")
