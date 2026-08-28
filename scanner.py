@@ -103,8 +103,11 @@ def verificar_arquivo(caminho):
     return achados
 
 
-def escanear(raiz):
-    """Percorre a árvore e devolve todos os achados."""
+def escanear(raiz, ignorar_caminho=None):
+    """Percorre a árvore de pastas e devolve todos os achados."""
+    if ignorar_caminho is None:
+        ignorar_caminho = PASTAS_IGNORADAS
+        
     achados = []
 
     for pasta_atual, subpastas, arquivos in os.walk(raiz):

@@ -1,0 +1,18 @@
+# A "lei" do pipeline. Os scripts Python leem daqui o que é aceitável.
+# Mudar a régua de segurança vira uma alteração de arquivo revisada em
+# Pull Request, e não uma conversa informal no chat da equipe.
+
+versao: 1
+
+escopo:
+  ignorar_caminhos:
+    - .git
+    - .venv
+    - __pycache__
+    - node_modules
+
+limites:
+  segredos:
+    ALTA: 0
+    MEDIA: 2
+    BAIXA: 5
