@@ -99,7 +99,7 @@ def verificar_arquivo(caminho):
 
     with open(caminho, "r", encoding="utf-8", errors="ignore") as arquivo:
         for numero, linha in enumerate(arquivo, start=1):
-               achados.append(verificar_linha(linha, numero, caminho))
+               achados.extend(verificar_linha(linha, numero, caminho))
     return achados
 
 
@@ -126,7 +126,7 @@ if __name__ == "__main__":
     for achado in resultados:
         print("[{}] {}:{}".format(
             achado["gravidade"], achado["arquivo"], achado["linha"]))
-    print("    {}".format(achado["titulo"]))
-    print("    {}".format(achado["detalhe"]))
-    print("    Como corrigir: {}".format(achado["correcao"]))
-    print("")
+        print("    {}".format(achado["titulo"]))
+        print("    {}".format(achado["detalhe"]))
+        print("    Como corrigir: {}".format(achado["correcao"]))
+        print("")
