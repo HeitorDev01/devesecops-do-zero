@@ -2,17 +2,29 @@
 # Mudar a régua de segurança vira uma alteração de arquivo revisada em
 # Pull Request, e não uma conversa informal no chat da equipe.
 
+# A "lei" do pipeline. Os scripts Python leem daqui o que é aceitável.
+
 versao: 1
 
 escopo:
+  # Pasta que o SAST (Bandit) vai analisar.
+  pasta_do_codigo: app
+
+  # Pastas que o scanner de segredos NÃO deve olhar.
   ignorar_caminhos:
     - .git
     - .venv
     - __pycache__
     - node_modules
+    - reports
 
 limites:
   segredos:
     ALTA: 0
     MEDIA: 2
     BAIXA: 5
+
+  sast:
+    ALTA: 0
+    MEDIA: 3
+    BAIXA: 10
