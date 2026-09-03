@@ -15,8 +15,10 @@ Uso:
 """
 
 import argparse
+from operator import le
 import sys
 
+import sast
 import politica
 import scanner
 
@@ -39,16 +41,19 @@ def montar_argumentos():
     return analisador.parse_args()
 
 def imprimir_resumo(resultado):
-    contagem = resultado["contagens"]["segredos"]
+    contagens = resultado["contagens"]
 
     print("")
     print("=" * 60)
     print("RESUMO DA VERIFICACAO DE SEGURANÇA")
     print("=" * 60)
-    print(" Segrados ....{} (ALTA{}, MEDIA{}, BAIXA{})".format(
-        contagem["total"], contagem["ALTA"],
-        contagem["MEDIA"], contagem["BAIXA"]
-    ))
+
+    for categoria, rotulo in (("segredos", "Segredos"), ("sast", "SAST")):
+        c = contagens[categoria]
+        print(" {:.<12} {} (ALTA{}, MEDIA{}, BAIXA{})".format( rotulo, 
+            c["total"], c["ALTA"],
+            c["MEDIA"], c["BAIXA"]
+        ))
     print("-" * 60)
 
     if resultado ["aprovado"]:
@@ -83,10 +88,23 @@ def main():
         return 2 
 
     ignorar = regras["escopo"].get("igorar_caminhos", [])
+    pasta_do_codigo = regras["escopo"].get("pasta_do_codigo", "app")
 
-    print(">> Procurando segredos em '{}' ...".format(argumentos.raiz))
-    achados = scanner.escanear(argumentos.raiz,ignorar)
-    print(">> {} achados(s).".format(len(achados)))
+    achados = []
+
+    print(">>[1/2] Procurando segredos em '{}'...".format(argumentos.raiz))
+    encontrados = scanner.escanear(argumentos.raiz, ignorar)
+    achados.extend(encontrados)
+    print(">>       {} achado(s).".format(len(encontrados)))
+
+    print(">> [2/2] Rodando SAST (Bandit) em '{}'...".format(pasta_do_codigo))
+    try:
+        encontrados = sast.rodar(pasta_do_codigo)
+        achados.extend(encontrados)
+        print(">>       {} achado(s).".format(len(encontrados)))
+    except RuntimeError as erro:
+        print(">>       Etapa falhou: {}".format(erro))
+        return 2
 
     resultado = politica.avaliar(achados, regras)
     imprimir_resumo(resultado)
