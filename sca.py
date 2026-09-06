@@ -91,4 +91,25 @@ def normalizar(arquivo_de_saida, arquivo_de_dependencias="requirements.txt"):
                     "tem_correcao": bool(correcoes),
                 })
 
-        return achados        
+        return achados
+
+def rodar(arquivo_de_dependencias="requirements.txt",
+          arquivo_de_saida="reports/pip-audit.json",):
+    if not pip_audit_esta_instalado():
+        print("     [aviso] pip-audit nao encontrado. Etapa do SCA pulada.")
+        return []
+
+    if not os.path.exists(arquivo_de_dependencias):
+        print("     [aviso] {} nao existe. Etapa do SCA pulada.".format(
+            arquivo_de_dependencias
+        ))
+        return []
+
+    executar_pip_audit(arquivo_de_dependencias, arquivo_de_saida)
+    return normalizar(arquivo_de_saida, arquivo_de_dependencias)
+
+if __name__ == "__main__":
+    achados = rodar()
+    print("Vulnerabilidades encontradas:", len(achados))
+    for achado in achados[:5]:
+        print("-", achado["titulo"], "|", achado["correcao"])
