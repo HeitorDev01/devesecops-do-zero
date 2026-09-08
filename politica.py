@@ -5,8 +5,6 @@ Este módulo não procura vulnerabilidade nenhuma. Ele recebe a lista de
 achados que os scanners produziram, lê o security-policy.yml e responde
 uma única pergunta: isso passa?
 
-Separar "encontrar problemas" de "decidir o que fazer com eles" é o
-que permite mudar a régua de segurança sem tocar em um scanner.
 """
 
 import os
@@ -35,7 +33,7 @@ def carregar_politica(caminho="security-policy.yml"):
 
 def contar(achados, tipo):
     """Conta achados de um tipo, agrupados por gravidade."""
-    contagem = {"ALTA": 0, "MEDIA": 0, "BAIXA": 0, "total": 0}
+    contagem = {"ALTA": 0, "MEDIA": 0, "BAIXA": 0, "DESCONHECIDA": 0, "total": 0}
 
     for achado in achados:
         if achado["tipo"] != tipo:
@@ -51,8 +49,18 @@ def contar(achados, tipo):
 CATEGORIAS = (
     ("segredos", "segredo"),
     ("sast", "codigo"),
+    ("sca", "dependencia"),
 )
 
+def contar_sem_correcao(achados):
+    """Quantas dependencias vulneraveis ainda nao tem versao corrigida."""
+    total = 0
+
+    for achado in achados:
+        if achado["tipo"] == "dependencia" and not achado.get("tem_correcao", True):
+            total += 1
+
+    return total
 
 def avaliar(achados, politica):
     """Aplica a política e devolve o veredito completo."""
@@ -78,6 +86,26 @@ def avaliar(achados, politica):
                         categoria.upper(), encontrados, gravidade, limite
                     )
                 )
+
+    limites_sca = limites.get("sca") or {}
+
+    if "total" in limites_sca:
+        encontrados = contagens["sca"]["total"]
+        if encontrados > limites_sca["total"]:
+            violacoes.append(
+                "SCA: {} vulnerabilidade(s) em dependencias - limite é {}".format(
+                    encontrados, limites_sca["total"]
+                )
+            )
+
+    if "sem_correcao" in limites_sca:
+        encontrados = contar_sem_correcao(achados)
+        if encontrados > limites_sca["sem_correcao"]:
+            violacoes.append(
+                "SCA: {} vulnerabilidade(s) sem correcao disponivel - limite é {}".format(
+                    encontrados, limites_sca["sem_correcao"]
+                )
+            )
 
     return {
         "aprovado": len(violacoes) == 0,

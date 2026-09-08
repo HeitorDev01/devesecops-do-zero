@@ -20,6 +20,7 @@ import sys
 
 import sast
 import politica
+import sca
 import scanner
 
 def montar_argumentos():
