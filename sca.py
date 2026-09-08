@@ -59,7 +59,7 @@ def normalizar(arquivo_de_saida, arquivo_de_dependencias="requirements.txt"):
         achados = []
 
         for dependencia in dados.get("dependencies", []):
-            nome = dependencia.get("nome")
+            nome = dependencia.get("name")
             versao = dependencia.get("version")
 
             for vulnerabilidade in dependencia.get("vulns", []):

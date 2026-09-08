@@ -15,7 +15,6 @@ Uso:
 """
 
 import argparse
-from operator import le
 import sys
 
 import sast
@@ -55,6 +54,10 @@ def imprimir_resumo(resultado):
             c["total"], c["ALTA"],
             c["MEDIA"], c["BAIXA"]
         ))
+    print("   {:<12} {} vulnerabilidade(s) em dependencias".format(
+            "SCA", contagens["sca"]["total"]
+        ))
+
     print("-" * 60)
 
     if resultado ["aprovado"]:
@@ -90,15 +93,17 @@ def main():
 
     ignorar = regras["escopo"].get("igorar_caminhos", [])
     pasta_do_codigo = regras["escopo"].get("pasta_do_codigo", "app")
+    arquivos_de_dependencias = regras["escopo"].get(
+        "arquivos_de_dependencias", "requirements.txt")
 
     achados = []
 
-    print(">>[1/2] Procurando segredos em '{}'...".format(argumentos.raiz))
+    print(">>[1/3] Procurando segredos em '{}'...".format(argumentos.raiz))
     encontrados = scanner.escanear(argumentos.raiz, ignorar)
     achados.extend(encontrados)
     print(">>       {} achado(s).".format(len(encontrados)))
 
-    print(">> [2/2] Rodando SAST (Bandit) em '{}'...".format(pasta_do_codigo))
+    print(">> [2/3] Rodando SAST (Bandit) em '{}'...".format(pasta_do_codigo))
     try:
         encontrados = sast.rodar(pasta_do_codigo)
         achados.extend(encontrados)
@@ -106,6 +111,14 @@ def main():
     except RuntimeError as erro:
         print(">>       Etapa falhou: {}".format(erro))
         return 2
+
+    print(">> [3/3] Rodando SCA (pip-audit) em '{}'...".format(arquivos_de_dependencias))
+    try:
+        encontrados = sca.rodar(arquivos_de_dependencias)
+        achados.extend(encontrados)
+        print(">>       {} achado(s).".format(len(encontrados)))
+    except RuntimeError as erro:
+        print(">>       [aviso] SCA nao pode ser executado: {}".format(erro))
 
     resultado = politica.avaliar(achados, regras)
     imprimir_resumo(resultado)
