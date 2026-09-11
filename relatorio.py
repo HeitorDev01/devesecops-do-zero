@@ -112,3 +112,41 @@ def gerar_markdown (resultado, caminho= "reports/security-reports.md"):
             linhas.append("")
 
         achados_ordenados = ordenar(resultado["achados"])
+
+        for tipo, titulo in NOME_DA_ETAPA.items():
+            do_tipo = [a for a in achados_ordenados if a["tipo"] == tipo]
+            if not do_tipo:
+                continue
+
+            linhas.append("## {} ({})".format(titulo, len(do_tipo)))
+            linhas.append("")
+
+            for achado in do_tipo:
+                linhas.append("### [{}] {}".format(achado["gravidade"], achado["titulo"]))
+                linhas.append("")
+                linhas.append("- **local:** '{}' linha {}".format(
+                    achado.get("arquivo"), achado.get("linha")
+                ))
+                linhas.append("- **Ferramenta:** {}".format(achado.get("ferramenta")))
+                if achado.get("detalhe"):
+                    linhas.append("- **Detalhe:** {}".format(achado["detalhe"]))
+                if achado.get("correcao"):
+                    linhas.append("- **Como corrigir:** {}".format(achado["correcao"]))
+                linhas.append("")
+
+        conteudo = "\n".join(linhas)
+
+        os.makedirs(os.path.dirname(caminho), exist_ok=True)
+        with open(caminho, "w", encoding="utf-8") as arquivo:
+            arquivo.write(conteudo)
+
+        return conteudo
+
+def gerar_json(resultado, caminho="reports/security-findings.json"):
+    """Grava o resutado inteiro no JSON, para outra ferramenta ler"""
+    os.makedirs(os.path.dirname(caminho), exist_ok=True)
+
+    with open (caminho, "w", encoding="utf-8") as arquivo:
+        json.dump(resultado, arquivo, indent=2, ensure_ascii=False)
+
+    return caminho
