@@ -62,3 +62,53 @@ def imprimir_no_console(resultado):
 
     todos = ordenar(resultado["acahdos"])
     principais = todos[:QUANTOS_NO_CONSOLE]
+
+    if principais:
+        print(" Achados mais graves")
+        for achado in principais:
+            print("     [{:<12}] {}:{}  ".format(
+                achado.get("gravidade", "?"),
+                achado.get("arquivo"),
+                achado.get("linha"),
+                achado.get("titulo")
+            ))
+
+    restantes = len(todos) - len(principais)
+    if restantes > 0:
+        print("")
+        print("  ... e mais {} achado(s). Veja o relatorio completo em".format(
+            restantes
+        ))
+        print("    reports/security-reports.md")
+    print("")
+
+def gerar_markdown (resultado, caminho= "reports/security-reports.md"):
+    """Monta o relatorio completo em markdonw e grava em arquivo"""
+    contagens = resultado["contagens"]
+    linhas = []
+
+    if resultado["reprovado"]:
+        linhas.append("# Relatorio de Segurança - APROVADO")
+    else:
+        linhas.append("# Relatorio de Segurança - REPROVADO")
+
+    linhas.append("")
+    linhas.append("| Etapa | Total | ALTA | MEDIA | BAIXA |")
+    linhas.append("|---|---:|---:|---:|")
+
+    for chave, rotulo in (("segredos", "Segredos"), ("sast, SAST"), ("sca", "SCA")):
+        c = contagens[chave]
+        linhas.append("| {} | {} | {} | {} | {} |".format(
+            rotulo, c["total"] c["ALTA"], c[MÉDIA], c["BAIXA"]
+        ))
+
+        linhas.append("")
+
+        if not resultado["aprovado"]:
+            linhas.append("## Por que o build foi reprovado")
+            linhas.append("")
+            for violacao in resultado["violacoes"]:
+                linhas.append("-" + violacao)
+            linhas.append("")
+
+        achados_ordenados = ordenar(resultado["achados"])
