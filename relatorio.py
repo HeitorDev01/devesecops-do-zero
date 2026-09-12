@@ -96,10 +96,10 @@ def gerar_markdown (resultado, caminho= "reports/security-reports.md"):
     linhas.append("| Etapa | Total | ALTA | MEDIA | BAIXA |")
     linhas.append("|---|---:|---:|---:|")
 
-    for chave, rotulo in (("segredos", "Segredos"), ("sast, SAST"), ("sca", "SCA")):
+    for chave, rotulo in (("segredos", "Segredos"), ("sast", "SAST"), ("sca", "SCA")):
         c = contagens[chave]
         linhas.append("| {} | {} | {} | {} | {} |".format(
-            rotulo, c["total"] c["ALTA"], c[MÉDIA], c["BAIXA"]
+            rotulo, c["total"], c["ALTA"], c["MEDIA"], c["BAIXA"]
         ))
 
         linhas.append("")

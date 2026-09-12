@@ -14,11 +14,9 @@ Uso:
     python pipeline.py --nao-falhar
 """
 
-import argparse
-import sys
-
-import sast
 import politica
+import relatorio
+import sast
 import sca
 import scanner
 
@@ -39,44 +37,6 @@ def montar_argumentos():
         help="Mostrar o relatorio mas sempre sair com codigo 0"
     )
     return analisador.parse_args()
-
-def imprimir_resumo(resultado):
-    contagens = resultado["contagens"]
-
-    print("")
-    print("=" * 60)
-    print("RESUMO DA VERIFICACAO DE SEGURANÇA")
-    print("=" * 60)
-
-    for categoria, rotulo in (("segredos", "Segredos"), ("sast", "SAST")):
-        c = contagens[categoria]
-        print(" {:.<12} {} (ALTA{}, MEDIA{}, BAIXA{})".format( rotulo, 
-            c["total"], c["ALTA"],
-            c["MEDIA"], c["BAIXA"]
-        ))
-    print("   {:<12} {} vulnerabilidade(s) em dependencias".format(
-            "SCA", contagens["sca"]["total"]
-        ))
-
-    print("-" * 60)
-
-    if resultado ["aprovado"]:
-        print("RESULTADO: APROVADO - dentro da politica de segurança")
-    else:
-        print("RESULTADO: REPROVADO - a politica foi violada")
-        for violacao in resultado ["violacoes"]:
-            print("     * " + violacao)
-
-    print("=" * 60)
-    print("")
-
-    for achado in resultado["achados"]:
-        print("[{}] {}:{}  {}".format(
-            achado["gravidade"], achado["arquivo"],
-            achado["linha"], achado["titulo"]
-        ))
-        print("     {}".format(achado["correcao"]))
-    print("")
 
 def main():
     argumentos = montar_argumentos()
@@ -121,13 +81,13 @@ def main():
         print(">>       [aviso] SCA nao pode ser executado: {}".format(erro))
 
     resultado = politica.avaliar(achados, regras)
-    imprimir_resumo(resultado)
+
+    relatorio.imprimir_no_console(resultado)
+    relatorio.gerar_markdown(resultado)
+    relatorio.gerar_json(resultado)
+
+    print(">> Relatórios em reports/security-report.md e reports/security-findings.json")
+    print("")
 
     if argumentos.nao_falhar:
-        return 0 
-    if resultado["aprovado"]:
         return 0
-    return 1
-
-if __name__ == "__main__":
-    sys.exit(main())
