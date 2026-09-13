@@ -1,0 +1,712 @@
+{
+  "aprovado": false,
+  "violacoes": [
+    "SEGREDOS: 5 achado(s) de gravidade ALTA — o limite é 0",
+    "SAST: 3 achado(s) de gravidade ALTA — o limite é 0",
+    "SAST: 4 achado(s) de gravidade MEDIA — o limite é 3",
+    "SCA: 48 vulnerabilidade(s) em dependencias - limite é 5"
+  ],
+  "contagens": {
+    "segredos": {
+      "ALTA": 5,
+      "MEDIA": 2,
+      "BAIXA": 0,
+      "DESCONHECIDA": 0,
+      "total": 7
+    },
+    "sast": {
+      "ALTA": 3,
+      "MEDIA": 4,
+      "BAIXA": 1,
+      "DESCONHECIDA": 0,
+      "total": 8
+    },
+    "sca": {
+      "ALTA": 0,
+      "MEDIA": 0,
+      "BAIXA": 0,
+      "DESCONHECIDA": 48,
+      "total": 48
+    }
+  },
+  "achados": [
+    {
+      "ferramenta": "scanner-de-segredos",
+      "tipo": "segredo",
+      "gravidade": "ALTA",
+      "titulo": "Chave de acesso da AWS",
+      "arquivo": ".\\exemplo\\config.py",
+      "linha": 7,
+      "detalhe": "Valor encontrado: AKIA****************",
+      "correcao": "Revogue a chave no console da AWS e use IAM Roles ou variáveis de ambiente."
+    },
+    {
+      "ferramenta": "scanner-de-segredos",
+      "tipo": "segredo",
+      "gravidade": "MEDIA",
+      "titulo": "Senha ou token escrito no código",
+      "arquivo": ".\\exemplo\\config.py",
+      "linha": 11,
+      "detalhe": "Valor encontrado: SENH******************************",
+      "correcao": "Troque o valor por os.environ['NOME_DA_VARIAVEL'] e cadastre o segredo no CI."
+    },
+    {
+      "ferramenta": "scanner-de-segredos",
+      "tipo": "segredo",
+      "gravidade": "ALTA",
+      "titulo": "Token de bot do Slack",
+      "arquivo": ".\\exemplo\\config.py",
+      "linha": 13,
+      "detalhe": "Valor encontrado: xoxb***********************************************",
+      "correcao": "Revogue o token no painel do Slack e recrie-o como variável de ambiente."
+    },
+    {
+      "ferramenta": "scanner-de-segredos",
+      "tipo": "segredo",
+      "gravidade": "MEDIA",
+      "titulo": "Senha ou token escrito no código",
+      "arquivo": ".\\exemplo\\config.py",
+      "linha": 13,
+      "detalhe": "Valor encontrado: SLAC***************************************************************",
+      "correcao": "Troque o valor por os.environ['NOME_DA_VARIAVEL'] e cadastre o segredo no CI."
+    },
+    {
+      "ferramenta": "scanner-de-segredos",
+      "tipo": "segredo",
+      "gravidade": "ALTA",
+      "titulo": "Chave de acesso da AWS",
+      "arquivo": ".\\exemplo\\legado\\backup.py",
+      "linha": 3,
+      "detalhe": "Valor encontrado: AKIA****************",
+      "correcao": "Revogue a chave no console da AWS e use IAM Roles ou variáveis de ambiente."
+    },
+    {
+      "ferramenta": "scanner-de-segredos",
+      "tipo": "segredo",
+      "gravidade": "ALTA",
+      "titulo": "Chave de acesso da AWS",
+      "arquivo": ".\\exemplo\\legado\\backup.py",
+      "linha": 3,
+      "detalhe": "Valor encontrado: AKIA****************",
+      "correcao": "Revogue a chave no console da AWS e use IAM Roles ou variáveis de ambiente."
+    },
+    {
+      "ferramenta": "scanner-de-segredos",
+      "tipo": "segredo",
+      "gravidade": "ALTA",
+      "titulo": "Chave privada (RSA/SSH/EC)",
+      "arquivo": ".\\exemplo\\legado\\deploy.pem",
+      "linha": 1,
+      "detalhe": "Valor encontrado: ----***************************",
+      "correcao": "Gere um novo par de chaves e guarde a privada em um cofre de segredos."
+    },
+    {
+      "ferramenta": "bandit",
+      "tipo": "codigo",
+      "gravidade": "BAIXA",
+      "titulo": "B404 — blacklist",
+      "arquivo": "app\\main.py",
+      "linha": 3,
+      "detalhe": "Consider possible security implications associated with the subprocess module. (confiança: HIGH)",
+      "correcao": "Detalhes e como corrigir: https://bandit.readthedocs.io/en/1.9.4/blacklists/blacklist_imports.html#b404-import-subprocess"
+    },
+    {
+      "ferramenta": "bandit",
+      "tipo": "codigo",
+      "gravidade": "ALTA",
+      "titulo": "B602 — subprocess_popen_with_shell_equals_true",
+      "arquivo": "app\\main.py",
+      "linha": 9,
+      "detalhe": "subprocess call with shell=True identified, security issue. (confiança: HIGH)",
+      "correcao": "Detalhes e como corrigir: https://bandit.readthedocs.io/en/1.9.4/plugins/b602_subprocess_popen_with_shell_equals_true.html"
+    },
+    {
+      "ferramenta": "bandit",
+      "tipo": "codigo",
+      "gravidade": "ALTA",
+      "titulo": "B324 — hashlib",
+      "arquivo": "app\\main.py",
+      "linha": 12,
+      "detalhe": "Use of weak MD5 hash for security. Consider usedforsecurity=False (confiança: HIGH)",
+      "correcao": "Detalhes e como corrigir: https://bandit.readthedocs.io/en/1.9.4/plugins/b324_hashlib.html"
+    },
+    {
+      "ferramenta": "bandit",
+      "tipo": "codigo",
+      "gravidade": "MEDIA",
+      "titulo": "B307 — blacklist",
+      "arquivo": "app\\main.py",
+      "linha": 15,
+      "detalhe": "Use of possibly insecure function - consider using safer ast.literal_eval. (confiança: HIGH)",
+      "correcao": "Detalhes e como corrigir: https://bandit.readthedocs.io/en/1.9.4/blacklists/blacklist_calls.html#b307-eval"
+    },
+    {
+      "ferramenta": "bandit",
+      "tipo": "codigo",
+      "gravidade": "ALTA",
+      "titulo": "B501 — request_with_no_cert_validation",
+      "arquivo": "app\\main.py",
+      "linha": 18,
+      "detalhe": "Call to requests with verify=False disabling SSL certificate checks, security issue. (confiança: HIGH)",
+      "correcao": "Detalhes e como corrigir: https://bandit.readthedocs.io/en/1.9.4/plugins/b501_request_with_no_cert_validation.html"
+    },
+    {
+      "ferramenta": "bandit",
+      "tipo": "codigo",
+      "gravidade": "MEDIA",
+      "titulo": "B113 — request_without_timeout",
+      "arquivo": "app\\main.py",
+      "linha": 18,
+      "detalhe": "Call to requests without timeout (confiança: LOW)",
+      "correcao": "Detalhes e como corrigir: https://bandit.readthedocs.io/en/1.9.4/plugins/b113_request_without_timeout.html"
+    },
+    {
+      "ferramenta": "bandit",
+      "tipo": "codigo",
+      "gravidade": "MEDIA",
+      "titulo": "B506 — yaml_load",
+      "arquivo": "app\\main.py",
+      "linha": 22,
+      "detalhe": "Use of unsafe yaml load. Allows instantiation of arbitrary objects. Consider yaml.safe_load(). (confiança: HIGH)",
+      "correcao": "Detalhes e como corrigir: https://bandit.readthedocs.io/en/1.9.4/plugins/b506_yaml_load.html"
+    },
+    {
+      "ferramenta": "bandit",
+      "tipo": "codigo",
+      "gravidade": "MEDIA",
+      "titulo": "B108 — hardcoded_tmp_directory",
+      "arquivo": "app\\main.py",
+      "linha": 25,
+      "detalhe": "Probable insecure usage of temp file/directory. (confiança: MEDIUM)",
+      "correcao": "Detalhes e como corrigir: https://bandit.readthedocs.io/en/1.9.4/plugins/b108_hardcoded_tmp_directory.html"
+    },
+    {
+      "ferramenta": "pip-audit",
+      "tipo": "dependencia",
+      "gravidade": "DESCONHECIDA",
+      "titulo": "requests 2.19.1 — PYSEC-2018-28",
+      "arquivo": "requirements.txt",
+      "linha": 0,
+      "detalhe": "The Requests package before 2.20.0 for Python sends an HTTP Authorization header to an http URI upon receiving a same-hostname https-to-http redirect, which mak...",
+      "correcao": "Atualize requests para 2.20.0",
+      "tem_correcao": true
+    },
+    {
+      "ferramenta": "pip-audit",
+      "tipo": "dependencia",
+      "gravidade": "DESCONHECIDA",
+      "titulo": "requests 2.19.1 — PYSEC-2018-28",
+      "arquivo": "requirements.txt",
+      "linha": 0,
+      "detalhe": "The Requests package through 2.19.1 before 2018-09-14 for Python sends an HTTP Authorization header to an http URI upon receiving a same-hostname https-to-http ...",
+      "correcao": "Atualize requests para 2.20.0",
+      "tem_correcao": true
+    },
+    {
+      "ferramenta": "pip-audit",
+      "tipo": "dependencia",
+      "gravidade": "DESCONHECIDA",
+      "titulo": "requests 2.19.1 — PYSEC-2023-74",
+      "arquivo": "requirements.txt",
+      "linha": 0,
+      "detalhe": "### Impact Since Requests v2.3.0, Requests has been vulnerable to potentially leaking `Proxy-Authorization` headers to destination servers, specifically during ...",
+      "correcao": "Atualize requests para 2.31.0",
+      "tem_correcao": true
+    },
+    {
+      "ferramenta": "pip-audit",
+      "tipo": "dependencia",
+      "gravidade": "DESCONHECIDA",
+      "titulo": "requests 2.19.1 — PYSEC-2023-74",
+      "arquivo": "requirements.txt",
+      "linha": 0,
+      "detalhe": "Requests is a HTTP library. Since Requests 2.3.0, Requests has been leaking Proxy-Authorization headers to destination servers when redirected to an HTTPS endpo...",
+      "correcao": "Atualize requests para 2.31.0",
+      "tem_correcao": true
+    },
+    {
+      "ferramenta": "pip-audit",
+      "tipo": "dependencia",
+      "gravidade": "DESCONHECIDA",
+      "titulo": "requests 2.19.1 — PYSEC-2026-1873",
+      "arquivo": "requirements.txt",
+      "linha": 0,
+      "detalhe": "When using a `requests.Session`, if the first request to a given origin is made with `verify=False`, TLS certificate verification may remain disabled for all su...",
+      "correcao": "Atualize requests para 2.32.0",
+      "tem_correcao": true
+    },
+    {
+      "ferramenta": "pip-audit",
+      "tipo": "dependencia",
+      "gravidade": "DESCONHECIDA",
+      "titulo": "requests 2.19.1 — PYSEC-2026-1872",
+      "arquivo": "requirements.txt",
+      "linha": 0,
+      "detalhe": "### Impact Due to a URL parsing issue, Requests releases prior to 2.32.4 may leak .netrc credentials to third parties for specific maliciously-crafted URLs. ###...",
+      "correcao": "Atualize requests para 2.32.4",
+      "tem_correcao": true
+    },
+    {
+      "ferramenta": "pip-audit",
+      "tipo": "dependencia",
+      "gravidade": "DESCONHECIDA",
+      "titulo": "requests 2.19.1 — PYSEC-2026-2275",
+      "arquivo": "requirements.txt",
+      "linha": 0,
+      "detalhe": "### Impact The `requests.utils.extract_zipped_paths()` utility function uses a predictable filename when extracting files from zip archives into the system temp...",
+      "correcao": "Atualize requests para 2.33.0",
+      "tem_correcao": true
+    },
+    {
+      "ferramenta": "pip-audit",
+      "tipo": "dependencia",
+      "gravidade": "DESCONHECIDA",
+      "titulo": "requests 2.19.1 — PYSEC-2026-1873",
+      "arquivo": "requirements.txt",
+      "linha": 0,
+      "detalhe": "When using a `requests.Session`, if the first request to a given origin is made with `verify=False`, TLS certificate verification may remain disabled for all su...",
+      "correcao": "Atualize requests para 2.32.0",
+      "tem_correcao": true
+    },
+    {
+      "ferramenta": "pip-audit",
+      "tipo": "dependencia",
+      "gravidade": "DESCONHECIDA",
+      "titulo": "requests 2.19.1 — PYSEC-2026-1872",
+      "arquivo": "requirements.txt",
+      "linha": 0,
+      "detalhe": "### Impact Due to a URL parsing issue, Requests releases prior to 2.32.4 may leak .netrc credentials to third parties for specific maliciously-crafted URLs. ###...",
+      "correcao": "Atualize requests para 2.32.4",
+      "tem_correcao": true
+    },
+    {
+      "ferramenta": "pip-audit",
+      "tipo": "dependencia",
+      "gravidade": "DESCONHECIDA",
+      "titulo": "requests 2.19.1 — PYSEC-2026-2275",
+      "arquivo": "requirements.txt",
+      "linha": 0,
+      "detalhe": "Requests is a HTTP library. Prior to version 2.33.0, the `requests.utils.extract_zipped_paths()` utility function uses a predictable filename when extracting fi...",
+      "correcao": "Atualize requests para 2.33.0",
+      "tem_correcao": true
+    },
+    {
+      "ferramenta": "pip-audit",
+      "tipo": "dependencia",
+      "gravidade": "DESCONHECIDA",
+      "titulo": "pyyaml 5.3.1 — PYSEC-2021-142",
+      "arquivo": "requirements.txt",
+      "linha": 0,
+      "detalhe": "A vulnerability was discovered in the PyYAML library in versions before 5.4, where it is susceptible to arbitrary code execution when it processes untrusted YAM...",
+      "correcao": "Atualize pyyaml para 5.4",
+      "tem_correcao": true
+    },
+    {
+      "ferramenta": "pip-audit",
+      "tipo": "dependencia",
+      "gravidade": "DESCONHECIDA",
+      "titulo": "pyyaml 5.3.1 — PYSEC-2021-142",
+      "arquivo": "requirements.txt",
+      "linha": 0,
+      "detalhe": "A vulnerability was discovered in the PyYAML library in versions before 5.4, where it is susceptible to arbitrary code execution when it processes untrusted YAM...",
+      "correcao": "Atualize pyyaml para 5.4",
+      "tem_correcao": true
+    },
+    {
+      "ferramenta": "pip-audit",
+      "tipo": "dependencia",
+      "gravidade": "DESCONHECIDA",
+      "titulo": "jinja2 2.11.2 — PYSEC-2021-66",
+      "arquivo": "requirements.txt",
+      "linha": 0,
+      "detalhe": "This affects the package jinja2 from 0.0.0 and before 2.11.3. The ReDoS vulnerability is mainly due to the `_punctuation_re regex` operator and its use of multi...",
+      "correcao": "Atualize jinja2 para 2.11.3",
+      "tem_correcao": true
+    },
+    {
+      "ferramenta": "pip-audit",
+      "tipo": "dependencia",
+      "gravidade": "DESCONHECIDA",
+      "titulo": "jinja2 2.11.2 — PYSEC-2021-66",
+      "arquivo": "requirements.txt",
+      "linha": 0,
+      "detalhe": "This affects the package jinja2 from 0.0.0 and before 2.11.3. The ReDOS vulnerability of the regex is mainly due to the sub-pattern [a-zA-Z0-9._-]+.[a-zA-Z0-9._...",
+      "correcao": "Atualize jinja2 para 2.11.3",
+      "tem_correcao": true
+    },
+    {
+      "ferramenta": "pip-audit",
+      "tipo": "dependencia",
+      "gravidade": "DESCONHECIDA",
+      "titulo": "jinja2 2.11.2 — PYSEC-2026-1473",
+      "arquivo": "requirements.txt",
+      "linha": 0,
+      "detalhe": "The `xmlattr` filter in affected versions of Jinja accepts keys containing spaces. XML/HTML attributes cannot contain spaces, as each would then be interpreted ...",
+      "correcao": "Atualize jinja2 para 3.1.3",
+      "tem_correcao": true
+    },
+    {
+      "ferramenta": "pip-audit",
+      "tipo": "dependencia",
+      "gravidade": "DESCONHECIDA",
+      "titulo": "jinja2 2.11.2 — PYSEC-2026-1474",
+      "arquivo": "requirements.txt",
+      "linha": 0,
+      "detalhe": "The `xmlattr` filter in affected versions of Jinja accepts keys containing non-attribute characters. XML/HTML attributes cannot contain spaces, `/`, `>`, or `=`...",
+      "correcao": "Atualize jinja2 para 3.1.4",
+      "tem_correcao": true
+    },
+    {
+      "ferramenta": "pip-audit",
+      "tipo": "dependencia",
+      "gravidade": "DESCONHECIDA",
+      "titulo": "jinja2 2.11.2 — PYSEC-2026-1475",
+      "arquivo": "requirements.txt",
+      "linha": 0,
+      "detalhe": "An oversight in how the Jinja sandboxed environment detects calls to `str.format` allows an attacker that controls the content of a template to execute arbitrar...",
+      "correcao": "Atualize jinja2 para 3.1.5",
+      "tem_correcao": true
+    },
+    {
+      "ferramenta": "pip-audit",
+      "tipo": "dependencia",
+      "gravidade": "DESCONHECIDA",
+      "titulo": "jinja2 2.11.2 — PYSEC-2026-1471",
+      "arquivo": "requirements.txt",
+      "linha": 0,
+      "detalhe": "An oversight in how the Jinja sandboxed environment interacts with the `|attr` filter allows an attacker that controls the content of a template to execute arbi...",
+      "correcao": "Atualize jinja2 para 3.1.6",
+      "tem_correcao": true
+    },
+    {
+      "ferramenta": "pip-audit",
+      "tipo": "dependencia",
+      "gravidade": "DESCONHECIDA",
+      "titulo": "jinja2 2.11.2 — PYSEC-2026-1473",
+      "arquivo": "requirements.txt",
+      "linha": 0,
+      "detalhe": "The `xmlattr` filter in affected versions of Jinja accepts keys containing spaces. XML/HTML attributes cannot contain spaces, as each would then be interpreted ...",
+      "correcao": "Atualize jinja2 para 3.1.3",
+      "tem_correcao": true
+    },
+    {
+      "ferramenta": "pip-audit",
+      "tipo": "dependencia",
+      "gravidade": "DESCONHECIDA",
+      "titulo": "jinja2 2.11.2 — PYSEC-2026-1471",
+      "arquivo": "requirements.txt",
+      "linha": 0,
+      "detalhe": "An oversight in how the Jinja sandboxed environment interacts with the `|attr` filter allows an attacker that controls the content of a template to execute arbi...",
+      "correcao": "Atualize jinja2 para 3.1.6",
+      "tem_correcao": true
+    },
+    {
+      "ferramenta": "pip-audit",
+      "tipo": "dependencia",
+      "gravidade": "DESCONHECIDA",
+      "titulo": "jinja2 2.11.2 — PYSEC-2026-1474",
+      "arquivo": "requirements.txt",
+      "linha": 0,
+      "detalhe": "The `xmlattr` filter in affected versions of Jinja accepts keys containing non-attribute characters. XML/HTML attributes cannot contain spaces, `/`, `>`, or `=`...",
+      "correcao": "Atualize jinja2 para 3.1.4",
+      "tem_correcao": true
+    },
+    {
+      "ferramenta": "pip-audit",
+      "tipo": "dependencia",
+      "gravidade": "DESCONHECIDA",
+      "titulo": "jinja2 2.11.2 — PYSEC-2026-1475",
+      "arquivo": "requirements.txt",
+      "linha": 0,
+      "detalhe": "An oversight in how the Jinja sandboxed environment detects calls to `str.format` allows an attacker that controls the content of a template to execute arbitrar...",
+      "correcao": "Atualize jinja2 para 3.1.5",
+      "tem_correcao": true
+    },
+    {
+      "ferramenta": "pip-audit",
+      "tipo": "dependencia",
+      "gravidade": "DESCONHECIDA",
+      "titulo": "idna 2.7 — PYSEC-2024-60",
+      "arquivo": "requirements.txt",
+      "linha": 0,
+      "detalhe": "### Impact A specially crafted argument to the `idna.encode()` function could consume significant resources. This may lead to a denial-of-service. ### Patches T...",
+      "correcao": "Atualize idna para 3.7",
+      "tem_correcao": true
+    },
+    {
+      "ferramenta": "pip-audit",
+      "tipo": "dependencia",
+      "gravidade": "DESCONHECIDA",
+      "titulo": "idna 2.7 — PYSEC-2024-60",
+      "arquivo": "requirements.txt",
+      "linha": 0,
+      "detalhe": "A vulnerability was identified in the kjd/idna library, specifically within the `idna.encode()` function, affecting version 3.6. The issue arises from the funct...",
+      "correcao": "Atualize idna para 3.7",
+      "tem_correcao": true
+    },
+    {
+      "ferramenta": "pip-audit",
+      "tipo": "dependencia",
+      "gravidade": "DESCONHECIDA",
+      "titulo": "idna 2.7 — PYSEC-2026-215",
+      "arquivo": "requirements.txt",
+      "linha": 0,
+      "detalhe": "This is the same issue as CVE-2024-3651, however the original remediation in 2024 was not a complete fix. Payloads such as `\"\\u0660\" * N` or `\"\\u30fb\" * N + \"\\u...",
+      "correcao": "Atualize idna para 3.15",
+      "tem_correcao": true
+    },
+    {
+      "ferramenta": "pip-audit",
+      "tipo": "dependencia",
+      "gravidade": "DESCONHECIDA",
+      "titulo": "idna 2.7 — PYSEC-2026-215",
+      "arquivo": "requirements.txt",
+      "linha": 0,
+      "detalhe": "Internationalized Domain Names in Applications (IDNA) for Python provides support for Internationalized Domain Names in Applications (IDNA) and Unicode IDNA Com...",
+      "correcao": "Atualize idna para 3.15",
+      "tem_correcao": true
+    },
+    {
+      "ferramenta": "pip-audit",
+      "tipo": "dependencia",
+      "gravidade": "DESCONHECIDA",
+      "titulo": "urllib3 1.23 — PYSEC-2019-133",
+      "arquivo": "requirements.txt",
+      "linha": 0,
+      "detalhe": "The urllib3 library before 1.24.2 for Python mishandles certain cases where the desired set of CA certificates is different from the OS store of CA certificates...",
+      "correcao": "Atualize urllib3 para 1.24.2",
+      "tem_correcao": true
+    },
+    {
+      "ferramenta": "pip-audit",
+      "tipo": "dependencia",
+      "gravidade": "DESCONHECIDA",
+      "titulo": "urllib3 1.23 — PYSEC-2019-132",
+      "arquivo": "requirements.txt",
+      "linha": 0,
+      "detalhe": "In the urllib3 library through 1.24.1 for Python, CRLF injection is possible if the attacker controls the request parameter.",
+      "correcao": "Atualize urllib3 para 1.24.3",
+      "tem_correcao": true
+    },
+    {
+      "ferramenta": "pip-audit",
+      "tipo": "dependencia",
+      "gravidade": "DESCONHECIDA",
+      "titulo": "urllib3 1.23 — PYSEC-2020-148",
+      "arquivo": "requirements.txt",
+      "linha": 0,
+      "detalhe": "urllib3 before 1.25.9 allows CRLF injection if the attacker controls the HTTP request method, as demonstrated by inserting CR and LF control characters in the f...",
+      "correcao": "Atualize urllib3 para 1.25.9",
+      "tem_correcao": true
+    },
+    {
+      "ferramenta": "pip-audit",
+      "tipo": "dependencia",
+      "gravidade": "DESCONHECIDA",
+      "titulo": "urllib3 1.23 — PYSEC-2019-133",
+      "arquivo": "requirements.txt",
+      "linha": 0,
+      "detalhe": "The urllib3 library before 1.24.2 for Python mishandles certain cases where the desired set of CA certificates is different from the OS store of CA certificates...",
+      "correcao": "Atualize urllib3 para 1.24.2",
+      "tem_correcao": true
+    },
+    {
+      "ferramenta": "pip-audit",
+      "tipo": "dependencia",
+      "gravidade": "DESCONHECIDA",
+      "titulo": "urllib3 1.23 — PYSEC-2020-148",
+      "arquivo": "requirements.txt",
+      "linha": 0,
+      "detalhe": "urllib3 before 1.25.9 allows CRLF injection if the attacker controls the HTTP request method, as demonstrated by inserting CR and LF control characters in the f...",
+      "correcao": "Atualize urllib3 para 1.25.9",
+      "tem_correcao": true
+    },
+    {
+      "ferramenta": "pip-audit",
+      "tipo": "dependencia",
+      "gravidade": "DESCONHECIDA",
+      "titulo": "urllib3 1.23 — PYSEC-2019-132",
+      "arquivo": "requirements.txt",
+      "linha": 0,
+      "detalhe": "In the urllib3 library through 1.24.2 for Python, CRLF injection is possible if the attacker controls the request parameter.",
+      "correcao": "Atualize urllib3 para 1.24.3",
+      "tem_correcao": true
+    },
+    {
+      "ferramenta": "pip-audit",
+      "tipo": "dependencia",
+      "gravidade": "DESCONHECIDA",
+      "titulo": "urllib3 1.23 — PYSEC-2026-1995",
+      "arquivo": "requirements.txt",
+      "linha": 0,
+      "detalhe": "When using urllib3's proxy support with `ProxyManager`, the `Proxy-Authorization` header is only sent to the configured proxy, as expected. However, when sendin...",
+      "correcao": "Atualize urllib3 para 1.26.19 ou 2.2.2",
+      "tem_correcao": true
+    },
+    {
+      "ferramenta": "pip-audit",
+      "tipo": "dependencia",
+      "gravidade": "DESCONHECIDA",
+      "titulo": "urllib3 1.23 — PYSEC-2023-192",
+      "arquivo": "requirements.txt",
+      "linha": 0,
+      "detalhe": "urllib3 doesn't treat the `Cookie` HTTP header special or provide any helpers for managing cookies over HTTP, that is the responsibility of the user. However, i...",
+      "correcao": "Atualize urllib3 para 1.26.17 ou 2.0.6",
+      "tem_correcao": true
+    },
+    {
+      "ferramenta": "pip-audit",
+      "tipo": "dependencia",
+      "gravidade": "DESCONHECIDA",
+      "titulo": "urllib3 1.23 — PYSEC-2023-192",
+      "arquivo": "requirements.txt",
+      "linha": 0,
+      "detalhe": "urllib3 is a user-friendly HTTP client library for Python. urllib3 doesn't treat the `Cookie` HTTP header special or provide any helpers for managing cookies ov...",
+      "correcao": "Atualize urllib3 para 1.26.17 ou 2.0.6",
+      "tem_correcao": true
+    },
+    {
+      "ferramenta": "pip-audit",
+      "tipo": "dependencia",
+      "gravidade": "DESCONHECIDA",
+      "titulo": "urllib3 1.23 — PYSEC-2023-207",
+      "arquivo": "requirements.txt",
+      "linha": 0,
+      "detalhe": "urllib3 before 1.24.2 does not remove the authorization HTTP header when following a cross-origin redirect (i.e., a redirect that differs in host, port, or sche...",
+      "correcao": "Atualize urllib3 para 1.24.2",
+      "tem_correcao": true
+    },
+    {
+      "ferramenta": "pip-audit",
+      "tipo": "dependencia",
+      "gravidade": "DESCONHECIDA",
+      "titulo": "urllib3 1.23 — PYSEC-2023-212",
+      "arquivo": "requirements.txt",
+      "linha": 0,
+      "detalhe": "urllib3 previously wouldn't remove the HTTP request body when an HTTP redirect response using status 303 \"See Other\" after the request had its method changed fr...",
+      "correcao": "Atualize urllib3 para 1.26.18 ou 2.0.7",
+      "tem_correcao": true
+    },
+    {
+      "ferramenta": "pip-audit",
+      "tipo": "dependencia",
+      "gravidade": "DESCONHECIDA",
+      "titulo": "urllib3 1.23 — PYSEC-2023-207",
+      "arquivo": "requirements.txt",
+      "linha": 0,
+      "detalhe": "urllib3 before 1.24.2 does not remove the authorization HTTP header when following a cross-origin redirect (i.e., a redirect that differs in host, port, or sche...",
+      "correcao": "Atualize urllib3 para 1.24.2",
+      "tem_correcao": true
+    },
+    {
+      "ferramenta": "pip-audit",
+      "tipo": "dependencia",
+      "gravidade": "DESCONHECIDA",
+      "titulo": "urllib3 1.23 — PYSEC-2023-212",
+      "arquivo": "requirements.txt",
+      "linha": 0,
+      "detalhe": "urllib3 is a user-friendly HTTP client library for Python. urllib3 previously wouldn't remove the HTTP request body when an HTTP redirect response using status ...",
+      "correcao": "Atualize urllib3 para 1.26.18 ou 2.0.7",
+      "tem_correcao": true
+    },
+    {
+      "ferramenta": "pip-audit",
+      "tipo": "dependencia",
+      "gravidade": "DESCONHECIDA",
+      "titulo": "urllib3 1.23 — PYSEC-2026-1999",
+      "arquivo": "requirements.txt",
+      "linha": 0,
+      "detalhe": "urllib3 handles redirects and retries using the same mechanism, which is controlled by the `Retry` object. The most common way to disable redirects is at the re...",
+      "correcao": "Atualize urllib3 para 2.5.0",
+      "tem_correcao": true
+    },
+    {
+      "ferramenta": "pip-audit",
+      "tipo": "dependencia",
+      "gravidade": "DESCONHECIDA",
+      "titulo": "urllib3 1.23 — PYSEC-2026-1994",
+      "arquivo": "requirements.txt",
+      "linha": 0,
+      "detalhe": "### Impact urllib3's [streaming API](https://urllib3.readthedocs.io/en/2.5.0/advanced-usage.html#streaming-and-i-o) is designed for the efficient handling of la...",
+      "correcao": "Atualize urllib3 para 2.6.0",
+      "tem_correcao": true
+    },
+    {
+      "ferramenta": "pip-audit",
+      "tipo": "dependencia",
+      "gravidade": "DESCONHECIDA",
+      "titulo": "urllib3 1.23 — PYSEC-2026-1996",
+      "arquivo": "requirements.txt",
+      "linha": 0,
+      "detalhe": "### Impact urllib3's [streaming API](https://urllib3.readthedocs.io/en/2.6.2/advanced-usage.html#streaming-and-i-o) is designed for the efficient handling of la...",
+      "correcao": "Atualize urllib3 para 2.6.3",
+      "tem_correcao": true
+    },
+    {
+      "ferramenta": "pip-audit",
+      "tipo": "dependencia",
+      "gravidade": "DESCONHECIDA",
+      "titulo": "urllib3 1.23 — PYSEC-2026-141",
+      "arquivo": "requirements.txt",
+      "linha": 0,
+      "detalhe": "### Impact When following cross-origin redirects for requests made using urllib3’s high-level APIs, such as `urllib3.request()`, `PoolManager.request()`, and `P...",
+      "correcao": "Atualize urllib3 para 2.7.0",
+      "tem_correcao": true
+    },
+    {
+      "ferramenta": "pip-audit",
+      "tipo": "dependencia",
+      "gravidade": "DESCONHECIDA",
+      "titulo": "urllib3 1.23 — PYSEC-2026-141",
+      "arquivo": "requirements.txt",
+      "linha": 0,
+      "detalhe": "urllib3 is an HTTP client library for Python. From 1.23 to before 2.7.0, cross-origin redirects followed from the low-level API via ProxyManager.connection_from...",
+      "correcao": "Atualize urllib3 para 2.7.0",
+      "tem_correcao": true
+    },
+    {
+      "ferramenta": "pip-audit",
+      "tipo": "dependencia",
+      "gravidade": "DESCONHECIDA",
+      "titulo": "urllib3 1.23 — PYSEC-2026-1999",
+      "arquivo": "requirements.txt",
+      "linha": 0,
+      "detalhe": "urllib3 handles redirects and retries using the same mechanism, which is controlled by the `Retry` object. The most common way to disable redirects is at the re...",
+      "correcao": "Atualize urllib3 para 2.5.0",
+      "tem_correcao": true
+    },
+    {
+      "ferramenta": "pip-audit",
+      "tipo": "dependencia",
+      "gravidade": "DESCONHECIDA",
+      "titulo": "urllib3 1.23 — PYSEC-2026-1995",
+      "arquivo": "requirements.txt",
+      "linha": 0,
+      "detalhe": "When using urllib3's proxy support with `ProxyManager`, the `Proxy-Authorization` header is only sent to the configured proxy, as expected. However, when sendin...",
+      "correcao": "Atualize urllib3 para 1.26.19 ou 2.2.2",
+      "tem_correcao": true
+    },
+    {
+      "ferramenta": "pip-audit",
+      "tipo": "dependencia",
+      "gravidade": "DESCONHECIDA",
+      "titulo": "urllib3 1.23 — PYSEC-2026-1994",
+      "arquivo": "requirements.txt",
+      "linha": 0,
+      "detalhe": "### Impact urllib3's [streaming API](https://urllib3.readthedocs.io/en/2.5.0/advanced-usage.html#streaming-and-i-o) is designed for the efficient handling of la...",
+      "correcao": "Atualize urllib3 para 2.6.0",
+      "tem_correcao": true
+    },
+    {
+      "ferramenta": "pip-audit",
+      "tipo": "dependencia",
+      "gravidade": "DESCONHECIDA",
+      "titulo": "urllib3 1.23 — PYSEC-2026-1996",
+      "arquivo": "requirements.txt",
+      "linha": 0,
+      "detalhe": "### Impact urllib3's [streaming API](https://urllib3.readthedocs.io/en/2.6.2/advanced-usage.html#streaming-and-i-o) is designed for the efficient handling of la...",
+      "correcao": "Atualize urllib3 para 2.6.3",
+      "tem_correcao": true
+    }
+  ]
+}

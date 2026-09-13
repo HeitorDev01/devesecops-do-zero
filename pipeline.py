@@ -13,6 +13,8 @@ Uso:
     python pipeline.py -- politica outra-politica.yaml
     python pipeline.py --nao-falhar
 """
+import argparse
+import sys
 
 import politica
 import relatorio
@@ -53,7 +55,7 @@ def main():
 
     ignorar = regras["escopo"].get("igorar_caminhos", [])
     pasta_do_codigo = regras["escopo"].get("pasta_do_codigo", "app")
-    arquivos_de_dependencias = regras["escopo"].get(
+    arquivo_de_dependencias = regras["escopo"].get(
         "arquivos_de_dependencias", "requirements.txt")
 
     achados = []
@@ -72,9 +74,9 @@ def main():
         print(">>       Etapa falhou: {}".format(erro))
         return 2
 
-    print(">> [3/3] Rodando SCA (pip-audit) em '{}'...".format(arquivos_de_dependencias))
+    print(">> [3/3] Rodando SCA (pip-audit) em '{}'...".format(arquivo_de_dependencias))
     try:
-        encontrados = sca.rodar(arquivos_de_dependencias)
+        encontrados = sca.rodar(arquivo_de_dependencias)
         achados.extend(encontrados)
         print(">>       {} achado(s).".format(len(encontrados)))
     except RuntimeError as erro:
@@ -89,5 +91,10 @@ def main():
     print(">> Relatórios em reports/security-report.md e reports/security-findings.json")
     print("")
 
-    if argumentos.nao_falhar:
+    if resultado["aprovado"]:
         return 0
+    return 1
+
+
+if __name__ == "__main__":
+    sys.exit(main())

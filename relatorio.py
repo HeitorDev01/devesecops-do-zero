@@ -10,7 +10,7 @@ tres púbicos diferentes
 import json
 import os
 
-ORDEM_DE_GRAVIDADE = {"ALTA": 0, "MÉDIA": 1, "BAIXA": 2, "DESCONHECIDA": 3}
+ORDEM_DE_GRAVIDADE = {"ALTA": 0, "MEDIA": 1, "BAIXA": 2, "DESCONHECIDA": 3}
 
 NOME_DA_ETAPA = {
     "segredo": "Segredos no código",
@@ -43,10 +43,10 @@ def imprimir_no_console(resultado):
     for categoria, rotulo in (("segredos", "Segredos"), ("sast", "SAST")):
         c = contagens[categoria]
         print("  {:.<12} {} (ALTA {}, MEDIA {}, BAIXA {})".format(
-            rotulo, c["total"], c["ALTA"], c["MÉDIA"], c["BAIXA"]))
+            rotulo, c["total"], c["ALTA"], c["MEDIA"], c["BAIXA"]))
 
-    print("  {:.<12} {} (vulnerabilidade(s) em dependências)".format(
-        "SCA", contagens["dependencia"]["total"]))
+    print("  {:.<12} {} (vulnerabilidade(s) em dependencias)".format(
+        "SCA", contagens["sca"]["total"]))
 
     print("-" * 60)
 
@@ -60,13 +60,13 @@ def imprimir_no_console(resultado):
     print("=" * 60)
     print("")
 
-    todos = ordenar(resultado["acahdos"])
+    todos = ordenar(resultado["achados"])
     principais = todos[:QUANTOS_NO_CONSOLE]
 
     if principais:
         print(" Achados mais graves")
         for achado in principais:
-            print("     [{:<12}] {}:{}  ".format(
+            print("     [{:<12}] {}:{}  {}".format(
                 achado.get("gravidade", "?"),
                 achado.get("arquivo"),
                 achado.get("linha"),
@@ -87,7 +87,7 @@ def gerar_markdown (resultado, caminho= "reports/security-reports.md"):
     contagens = resultado["contagens"]
     linhas = []
 
-    if resultado["reprovado"]:
+    if resultado["aprovado"]:
         linhas.append("# Relatorio de Segurança - APROVADO")
     else:
         linhas.append("# Relatorio de Segurança - REPROVADO")
