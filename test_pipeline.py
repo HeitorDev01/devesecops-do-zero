@@ -77,3 +77,31 @@ def achado_falso(tipo="segredo", gravidade="ALTA"):
         "detalhe": "",
         "correcao": "",
     } 
+
+def test_politica_reprova_acima_do_limite():
+    regras = {"limites": {"segredos": {"ALTA": 0}}}
+    resultado = politica.avaliar([achado_falso()], regras)
+
+    assert resultado["aprovado"] is False
+    assert len(resultado["violacoes"]) == 1
+
+def test_politica_aprova_dentro_do_limite():
+    regras = {"limites":{"segredos":{"ALTA": 2}}}
+    resultado = politica.avaliar([achado_falso(),achado_falso()], regras)
+
+    assert resultado["aprovado"] is True
+
+
+def test_limite_e_estritamento_maior():
+    """Limite 2 tolera 2; o terceiro reprova."""
+    regras = {"limites": {"segredos": {"ALTA":2}}}
+
+    tres = [achado_falso(), achado_falso(), achado_falso()]
+    assert politica.avaliar(tres, regras)["aprovado"] is False
+
+def test_sem_limite_definido_nao_reprova():
+    """Ausencia de limite significa 'ano me importo' nao 'zero'. """
+    regras = {"limites": {}}
+    resultado = politica.avaliar([achado_falso()], regras)
+
+    assert resultado["aprovado"] is True
