@@ -105,3 +105,28 @@ def test_sem_limite_definido_nao_reprova():
     resultado = politica.avaliar([achado_falso()], regras)
 
     assert resultado["aprovado"] is True
+
+def test_ordena_por_gravidade ():
+    """ALTA, depois MEDIA, depois BAIXA, depois DESCONHECIDA. """
+    bagunca = [
+        achado_falso(gravidade="DESCONHECIDA")
+        achado_falso(gravidade="BAIXA")
+        achado_falso(gravidade="ALTA")
+        achado_falso(gravidade="MEDIA")
+    ]
+
+    ordenados = relatorio.ordenar(bagunca)
+    gravidade = [a["gravidade"] for a  in ordenados]
+
+    assert gravidade == ["ALTA", "MEDIA", "BAIXA", "DESCONHECIDA"]
+
+def test_markdown_e_gravado_em_arquivo(tmp_path):
+    regras = {"limies":{"segredos": {"ALTA": 0}}}
+    resultado = politica.avaliar([achado_falso()], regras)
+
+    caminho = str(tmp_path / "relatorio.md")
+    conteudo = relatorio.gerar_markdown(resultado, caminho)
+
+    assert "REPROVADO" in conteudo
+    assert open(caminho, encoding="utf-8").read() == conteudo
+    
