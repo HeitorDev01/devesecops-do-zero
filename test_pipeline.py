@@ -15,7 +15,7 @@ import sast
 import scanner
 
 def test_encontra_chave_da_aws():
-    achados = scanner.verfificar_linha(
+    achados = scanner.verificar_linha(
         'CHAVE = "AKIA4KJH2LKJ3HGF9DSA"', 1, "teste.py")
 
     assert len(achados) >= 1
@@ -58,7 +58,7 @@ def test_respeita_o_marcador_de_excecao():
 def test_mascar_esconde_o_valor ():
     mascarado = scanner.mascarar("AKIA4KJH2LKJ3HGF9DSA")
 
-    assert mascarado.startswith("AIKA")
+    assert mascarado.startswith("AKIA")
     assert "4KJH2LKJ3HGF9DSA" not in mascarado
     assert len(mascarado) == 20
 
@@ -109,10 +109,10 @@ def test_sem_limite_definido_nao_reprova():
 def test_ordena_por_gravidade ():
     """ALTA, depois MEDIA, depois BAIXA, depois DESCONHECIDA. """
     bagunca = [
-        achado_falso(gravidade="DESCONHECIDA")
-        achado_falso(gravidade="BAIXA")
-        achado_falso(gravidade="ALTA")
-        achado_falso(gravidade="MEDIA")
+        achado_falso(gravidade="DESCONHECIDA"),
+        achado_falso(gravidade="BAIXA"),
+        achado_falso(gravidade="ALTA"),
+        achado_falso(gravidade="MEDIA"),
     ]
 
     ordenados = relatorio.ordenar(bagunca)
@@ -121,7 +121,7 @@ def test_ordena_por_gravidade ():
     assert gravidade == ["ALTA", "MEDIA", "BAIXA", "DESCONHECIDA"]
 
 def test_markdown_e_gravado_em_arquivo(tmp_path):
-    regras = {"limies":{"segredos": {"ALTA": 0}}}
+    regras = {"limites":{"segredos": {"ALTA": 0}}}
     resultado = politica.avaliar([achado_falso()], regras)
 
     caminho = str(tmp_path / "relatorio.md")
@@ -129,4 +129,8 @@ def test_markdown_e_gravado_em_arquivo(tmp_path):
 
     assert "REPROVADO" in conteudo
     assert open(caminho, encoding="utf-8").read() == conteudo
-    
+
+def test_treaduz_gravidade_do_bandit():
+    assert sast.TRADUCAO_DE_GRAVIDADE["HIGH"] == "ALTA"
+    assert sast.TRADUCAO_DE_GRAVIDADE["MEDIUM"] == "MEDIA"
+    assert sast.TRADUCAO_DE_GRAVIDADE["LOW"] == "BAIXA"
